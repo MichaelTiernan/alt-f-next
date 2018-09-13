@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENSSH_VERSION = 7.5p1
+OPENSSH_VERSION = 7.8p1
 OPENSSH_SITE = http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
 OPENSSH_LICENSE = BSD-3-Clause, BSD-2-Clause, Public Domain
 OPENSSH_LICENSE_FILES = LICENCE
@@ -12,8 +12,8 @@ OPENSSH_LICENSE_FILES = LICENCE
 # f4fcd8c788a4854d4ebae400cf55e3957f906835.patch
 # afc3e31b637db9dae106d4fad78f7b481c8c24e3.patch
 OPENSSH_AUTORECONF = YES
-OPENSSH_PATCH = https://github.com/openssh/openssh-portable/commit/f4fcd8c788a4854d4ebae400cf55e3957f906835.patch \
-	https://github.com/openssh/openssh-portable/commit/afc3e31b637db9dae106d4fad78f7b481c8c24e3.patch
+#OPENSSH_PATCH = https://github.com/openssh/openssh-portable/commit/f4fcd8c788a4854d4ebae400cf55e3957f906835.patch \
+#	https://github.com/openssh/openssh-portable/commit/afc3e31b637db9dae106d4fad78f7b481c8c24e3.patch
 OPENSSH_CONF_ENV = LD="$(TARGET_CC)" LDFLAGS="$(TARGET_CFLAGS)"
 OPENSSH_CONF_OPTS = \
 	--sysconfdir=/etc/ssh \
@@ -74,5 +74,11 @@ define OPENSSH_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/openssh/S50sshd \
 		$(TARGET_DIR)/etc/init.d/S50sshd
 endef
+
+define OPENSSH_INSTALL_SSH_COPY_ID
+	$(INSTALL) -D -m 755 $(@D)/contrib/ssh-copy-id $(TARGET_DIR)/usr/bin/ssh-copy-id
+endef
+
+OPENSSH_POST_INSTALL_TARGET_HOOKS += OPENSSH_INSTALL_SSH_COPY_ID
 
 $(eval $(autotools-package))

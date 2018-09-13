@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 source $BASE_DIR/../.config 2> /dev/null
 source $BASE_DIR/../board/dns32x/exports.source $BR2_PROJECT

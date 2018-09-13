@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MARIADB_VERSION = 10.1.23
+MARIADB_VERSION = 10.1.35
 MARIADB_SITE = https://downloads.mariadb.org/interstitial/mariadb-$(MARIADB_VERSION)/source
 MARIADB_LICENSE = GPL-2.0 (server), GPL-2.0 with FLOSS exception (GPL client library), LGPL-2.0 (LGPL client library)
 # Tarball no longer contains LGPL license text
@@ -67,6 +67,8 @@ MARIADB_CONF_OPTS += \
 	-DMYSQL_DATADIR=/var/lib/mysql \
 	-DMYSQL_UNIX_ADDR=$(MYSQL_SOCKET)
 
+HOST_MARIADB_CONF_OPTS += -DWITH_SSL=bundled
+
 # Some helpers must be compiled for host in order to crosscompile mariadb for
 # the target. They are then included by import_executables.cmake which is
 # generated during the build of the host helpers. It is not necessary to build
@@ -102,13 +104,13 @@ define MARIADB_INSTALL_INIT_SYSTEMD
 endef
 endif
 
+# We don't need mysql_config on the target as it's only useful in staging
+# We also don't need the test suite on the target
 define MARIADB_POST_INSTALL
 	mkdir -p $(TARGET_DIR)/var/lib/mysql
 	$(INSTALL) -D -m 644 $(TARGET_DIR)/usr/share/mysql/my-small.cnf \
 		$(TARGET_DIR)/etc/mysql/my.cnf
-	# We don't need this on the target as it's only useful in staging
 	$(RM) $(TARGET_DIR)/usr/bin/mysql_config
-	# Remove test suite
 	$(RM) -r $(TARGET_DIR)/usr/share/mysql/test
 endef
 
